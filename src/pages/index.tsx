@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "gatsby-link";
 import HeaderMenu from "../components/HeaderMenu/HeaderMenu";
-import { menuItems } from "../layouts";
+// import { menuItems } from "../layouts";
 import {
   Button,
   Segment,
@@ -9,7 +9,12 @@ import {
   Grid,
   Header,
   Icon,
+  Image,
 } from "semantic-ui-react";
+import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
+import FooterContact from "../components/FooterContact/FooterContact";
+const bookPile = require("../assets/bookPile.jpg");
+import Layout from "../components/layout";
 
 interface IndexPageProps {
   location: {
@@ -18,53 +23,65 @@ interface IndexPageProps {
 }
 
 export default (props: IndexPageProps) =>
-  <div>
-    {/* Master head */}
-    <Segment vertical inverted textAlign="center" className="masthead">
-      <HeaderMenu
-        Link={Link} pathname={props.location.pathname} items={menuItems} inverted
-      />
-      <Container text>
-        <Header inverted as="h1">Gatsby 1.0 - Starter kit</Header>
-        <Header inverted as="h2">Typescript - Jest - Semantic UI</Header>
-        <Button primary size="huge">Get started!</Button>
-      </Container>
+  <Layout location={props.location}><Container>
+    <Segment vertical >
+      <Header as="h2">
+        <Icon name="home" />
+        <Header.Content>
+          Blog - Bilgi Merkezi
+            <Header.Subheader>
+            Recon Danışmanlık tarafından sağlanan ücretsiz bilgi paylaşım hizmetidir. 
+            </Header.Subheader>
+        </Header.Content>
+      </Header>
     </Segment>
 
-    {/* About this starter */}
-    <Segment vertical className="stripe">
-      <Grid stackable verticalAlign="middle" className="container">
+    <Segment vertical >
+      <Grid stackable verticalAlign="middle" >
         <Grid.Row>
           <Grid.Column width="8">
-            <Header>Lorem ipsum</Header>
+          <Segment basic as={Container} text>
+            <Header>Neden blog'lamalıyız?</Header>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Porro laudantium ad, quae, perspiciatis ipsa distinctio.
-                </p>
-            <Header>Dolor sit amet</Header>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Porro laudantium ad, quae, perspiciatis ipsa distinctio.
-                </p>
+            Bilgi, mutluluk gibi, paylaşıldıkça büyür. Öbür dünyaya servetimizi götüremediğimiz gibi, 
+            bilgimizi de götüremeyeceğiz. Bize düşen, bilgimizi paylaşmak, sonraki nesillerin gelişimine 
+            katkıda bulunmak olmalıdır. Bizi yetiştiren ailemize, topluma, ülkemize, aynı zamanda 
+            insanlığa borcumuzu bu şekilde ödeyebiliriz.</p>
+
+            <p>Ülkemizde sanayi devriminin süreçleri tüm boyutlarıyla yaşanmamış olmasına rağmen, 
+              zamanın zorlamasıyla günümüzde
+               bilgi toplumuna geçiş başladığından, ortaya çıkan manzara tarım, sanayi ve bilgi 
+               toplumunun iç içe geçmiş, birarada olduğu bir durum sergilemektedir. Bu dağılım 
+               kurumsal firmalarda da aynı şekilde geçerlidir. Ülkemizde KOBİ ve daha büyük 
+               işletmelerde hala tarım toplumu etkisini görmek mümkündür. Tarım toplumu etkisinin 
+               ortadan kalkması için birkaç nesil gerekecektir. Biz de içinde bulunduğumuz dönemde 
+               üstümüze düşen sorumluluğu yapmalıyız.</p>
+
+            <p>Bu nedenlerle blogdaki yazıların çoğunu Türk diliyle yazmaya karar verdim.</p>
+
+            <p>Bu blogun, bir süredir oluşan birikimleri hızlıca paylaşmayı sağlayacağı için mutluyum.</p>
+
+          </Segment>
           </Grid.Column>
-          <Grid.Column width="6" floated="right">
-            {/* TODO replace with a pretty GIF */}
-            <Header>Lorem ipsum</Header>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Porro laudantium ad, quae, perspiciatis ipsa distinctio.
-                </p>
-            <Header>Dolor sit amet</Header>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Porro laudantium ad, quae, perspiciatis ipsa distinctio.
-                </p>
+          <Grid.Column width="6" >
+            <Image src={bookPile} />
+            <Header>Bu nedenlerle blogdaki yazıların çoğunu Türk diliyle yazmaya karar verdim</Header>
           </Grid.Column>
         </Grid.Row>
+        <Grid.Row>
+          <Container text>
+            <Icon name="hand right outline" size="huge"/><Button color="orange" as={Link} to="/blog">
+            Hemen okumaya başla</Button> 
+          </Container>
+        </Grid.Row>
+       
       </Grid>
     </Segment>
 
-    {/* Key features */}
+    <Segment vertical>
+      <FooterContact />
+    </Segment>
+    {/* Key features
     <Segment vertical className="stripe alternate feature">
       <Grid columns="3" textAlign="center" divided relaxed stackable className="container">
         <Grid.Row>
@@ -106,5 +123,5 @@ export default (props: IndexPageProps) =>
           </Grid.Column>
         </Grid.Row>
       </Grid>
-    </Segment>
-  </div>;
+    </Segment> */}
+  </Container></Layout>;

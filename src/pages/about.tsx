@@ -1,14 +1,16 @@
 import * as React from "react";
 import { Header, Container, Segment, Icon } from "semantic-ui-react";
+import Layout from "../components/layout";
 
 export default () => {
   return (
+  <Layout>
     <Container>
       <Segment vertical>
         <Header as="h2">
           <Icon name="info circle" />
           <Header.Content>
-            About
+            Hakkımızda
           </Header.Content>
         </Header>
       </Segment>
@@ -25,5 +27,6 @@ export default () => {
         </p>
       </Segment>
     </Container>
+</Layout>
   );
 };

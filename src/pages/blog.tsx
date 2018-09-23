@@ -6,6 +6,10 @@ import BlogTitle from "../components/BlogTitle";
 import TagsCard from "../components/TagsCard/TagsCard";
 import BlogPagination from "../components/BlogPagination/BlogPagination";
 import { get } from "lodash";
+import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
+import FooterContact from "../components/FooterContact/FooterContact";
+import Layout from "../components/layout";
+import {graphql} from "gatsby";
 
 interface BlogProps {
   data: {
@@ -26,27 +30,28 @@ export default (props: BlogProps) => {
   const { pathname } = props.location;
   const pageCount = Math.ceil(props.data.posts.totalCount / 10);
 
+  // console.log(`BENISIL -- frontmatter.author: ${JSON.stringify(posts[0].node.frontmatter.author)}`);
   // TODO export posts in a proper component
   const Posts = (
     <Container>
       {posts.map(({ node }) => {
         const { frontmatter, timeToRead, fields: { slug }, excerpt } = node;
-        const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
+        const avatar = frontmatter.author.avatar.childImageSharp as ImageSharp;
         const cover = get(frontmatter, "image.children.0.responsiveResolution", {});
 
         const extra = (
           <Comment.Group>
             <Comment>
               <Comment.Avatar
-                src={avatar.responsiveResolution.src}
-                srcSet={avatar.responsiveResolution.srcSet}
+                src={avatar.fixed.src}
+                srcSet={avatar.fixed.srcSet}
               />
               <Comment.Content>
                 <Comment.Author style={{ fontWeight: 400 }}>
                   {frontmatter.author.id}
                 </Comment.Author>
                 <Comment.Metadata style={{ margin: 0 }}>
-                  {frontmatter.updatedDate} - {timeToRead} min read
+                  {frontmatter.updatedDate} - {timeToRead} dakika okuma süresi
               </Comment.Metadata>
               </Comment.Content>
             </Comment>
@@ -57,7 +62,7 @@ export default (props: BlogProps) => {
           <Card.Description>
             {excerpt}
             <br />
-            <Link to={slug}>Read more…</Link>
+            <Link to={slug}>Devamı…</Link>
           </Card.Description>
         );
 
@@ -75,6 +80,7 @@ export default (props: BlogProps) => {
   );
 
   return (
+   <Layout location={props.location}>
     <Container>
       {/* Title */}
       <BlogTitle />
@@ -93,7 +99,10 @@ export default (props: BlogProps) => {
           </div>
         </Grid>
       </Segment>
+      <DanismakIsterMisin />
+      <FooterContact />
     </Container>
+    </Layout>
   );
 };
 
@@ -128,24 +137,18 @@ query PageBlog {
           title
           updatedDate(formatString: "DD MMMM, YYYY")
           image {
-          	children {
-              ... on ImageSharp {
-                responsiveResolution(width: 700, height: 100) {
-                  src
-                  srcSet
-                }
+            childImageSharp {
+                fixed(width: 700, height: 100) {
+                ...GatsbyImageSharpFixed 
               }
             }
           }
           author {
             id
             avatar {
-              children {
-                ... on ImageSharp {
-                  responsiveResolution(width: 35, height: 35) {
-                    src
-                    srcSet
-                  }
+              childImageSharp {
+                  fixed(width: 35, height: 35) {
+                  ...GatsbyImageSharpFixed 
                 }
               }
             }

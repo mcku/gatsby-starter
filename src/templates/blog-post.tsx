@@ -5,6 +5,9 @@ import { Header, Container, Segment, Icon, Label, Button, Grid, Card, Image, Ite
 import { MarkdownRemark, ImageSharp, MarkdownRemarkConnection, Site } from "../graphql-types";
 import BlogTitle from "../components/BlogTitle";
 import { DiscussionEmbed } from "disqus-react";
+import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
+import FooterContact from "../components/FooterContact/FooterContact";
+import { graphql } from "gatsby";
 
 interface BlogPostProps {
   data: {
@@ -16,28 +19,28 @@ interface BlogPostProps {
 
 export default (props: BlogPostProps) => {
   const { frontmatter, html, timeToRead } = props.data.post;
-  const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
+  const avatar = frontmatter.author.avatar.childImageSharp as ImageSharp;
 
   const tags = props.data.post.frontmatter.tags
     .map((tag) => <Label key={tag}><Link to={`/blog/tags/${tag}/`}>{tag}</Link></Label>);
 
-  const recents = props.data.recents.edges
+  const recents = props.data.recents && props.data.recents.edges
     .map(({ node }) => {
-      const recentAvatar = node.frontmatter.author.avatar.children[0] as ImageSharp;
-      const recentCover = get(node, "frontmatter.image.children.0.responsiveResolution", {});
+      const recentAvatar = node.frontmatter.author.avatar.childImageSharp as ImageSharp;
+      const recentCover = get(node, "frontmatter.image.childImageSharp.fixed", {});
       const extra = (
         <Comment.Group>
           <Comment>
             <Comment.Avatar
-              src={recentAvatar.responsiveResolution.src}
-              srcSet={recentAvatar.responsiveResolution.srcSet}
+              src={recentAvatar.fixed.src}
+              srcSet={recentAvatar.fixed.srcSet}
             />
             <Comment.Content>
               <Comment.Author style={{ fontWeight: 400 }}>
                 {node.frontmatter.author.id}
               </Comment.Author>
               <Comment.Metadata style={{ margin: 0 }}>
-                {node.timeToRead} min read
+                {node.timeToRead} dakika okuma süresi
               </Comment.Metadata>
             </Comment.Content>
           </Comment>
@@ -56,7 +59,7 @@ export default (props: BlogPostProps) => {
       );
     });
 
-  const cover = get(frontmatter, "image.children.0.responsiveResolution", {} );
+  const cover = get(frontmatter, "image.childImageSharp.responsiveResolution", {} );
   return (
     <Container>
       <BlogTitle />
@@ -64,13 +67,13 @@ export default (props: BlogPostProps) => {
         <Item.Group>
           <Item>
             <Item.Image size="tiny" shape="circular"
-              src={avatar.responsiveResolution.src}
-              srcSet={avatar.responsiveResolution.srcSet}
+              src={avatar.fixed.src}
+              srcSet={avatar.fixed.srcSet}
             />
             <Item.Content>
               <Item.Description>{frontmatter.author.id}</Item.Description>
               <Item.Meta>{frontmatter.author.bio}</Item.Meta>
-              <Item.Extra>{frontmatter.updatedDate} - {timeToRead} min read</Item.Extra>
+              <Item.Extra>{frontmatter.updatedDate} - {timeToRead} dakika okuma süresi</Item.Extra>
             </Item.Content>
           </Item>
         </Item.Group>
@@ -101,6 +104,8 @@ export default (props: BlogPostProps) => {
           {recents}
         </Grid>
       </Segment>
+      <DanismakIsterMisin />
+      <FooterContact />
     </Container>
   );
 };
@@ -126,27 +131,21 @@ export const pageQuery = graphql`
         bio
         twitter
         avatar {
-          children {
-            ... on ImageSharp {
-              responsiveResolution(width: 80, height: 80, quality: 100) {
-                src
-                srcSet
+          childImageSharp{
+                fixed(width: 80, height: 80, quality: 100) {
+                ...GatsbyImageSharpFixed 
               }
-            }
           }
         }
       }
       title
       updatedDate(formatString: "MMM D, YYYY")
       image {
-        children {
-          ... on ImageSharp {
-            responsiveResolution(width: 900, height: 300, quality: 100) {
-              src
-              srcSet
-            }
-          }
-        }
+        childImageSharp{
+                fixed(width: 900, height: 300, quality: 100) {
+                ...GatsbyImageSharpFixed 
+              }
+        } 
       }
     }
   }
@@ -168,24 +167,18 @@ export const pageQuery = graphql`
         frontmatter {
           title
           image {
-            children {
-              ... on ImageSharp {
-                responsiveResolution(width: 300, height: 100) {
-                  src
-                  srcSet
-                }
-              }
+            childImageSharp{
+                fixed(width: 300, height: 100) {
+                ...GatsbyImageSharpFixed 
+            }
             }
           }
           author {
             id
             avatar {
-              children {
-                ... on ImageSharp {
-                  responsiveResolution(width: 36, height: 36) {
-                    src
-                    srcSet
-                  }
+              childImageSharp {
+                  fixed(width: 36, height: 36) {
+                  ...GatsbyImageSharpFixed 
                 }
               }
             }

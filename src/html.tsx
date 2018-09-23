@@ -4,17 +4,19 @@
 import * as React from "react";
 import Helmet from "react-helmet";
 
+import styles from "./css/styles.css";
+
 const config = require("../gatsby-config.js");
 
 // Load production style
-let styles: string;
-if (process.env.NODE_ENV === `production`) {
-  try {
-    styles = require("!raw-loader!../public/styles.css");
-  } catch (err) {
-    console.log(err);
-  }
-}
+// let styles: string;
+// if (process.env.NODE_ENV === `production`) {
+//   try {
+//     styles = require("!raw-loader!../public/styles.css");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
 
 interface HtmlProps {
   body: any;
@@ -23,7 +25,7 @@ interface HtmlProps {
 }
 
 // Use `module.exports` to be compliante with `webpack-require` import method
-module.exports = (props: HtmlProps) => {
+export default (props: HtmlProps) => {
   const head = Helmet.rewind();
 
   const css = (process.env.NODE_ENV === `production`) ?
@@ -41,7 +43,7 @@ module.exports = (props: HtmlProps) => {
     <html lang="en">
       <head>
         {props.headComponents}
-        <title>My website</title>
+        <title>Recon Blog</title>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta

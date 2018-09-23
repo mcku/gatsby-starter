@@ -1,5 +1,6 @@
 import * as React from "react";
 import Blog from "../pages/blog";
+import { graphql } from "gatsby";
 
 export default Blog;
 
@@ -36,24 +37,18 @@ query TemplateTagPage($tag: String) {
           title
           updatedDate(formatString: "DD MMMM, YYYY")
           image {
-          	children {
-              ... on ImageSharp {
-                responsiveResolution(width: 700, height: 100) {
-                  src
-                  srcSet
-                }
+            childImageSharp {
+              fixed(width: 700, height: 100) {
+                ...GatsbyImageSharpFixed 
               }
             }
           }
           author {
             id
             avatar {
-              children {
-                ... on ImageSharp {
-                  responsiveResolution(width: 35, height: 35) {
-                    src
-                    srcSet
-                  }
+              childImageSharp {
+                  fixed(width: 35, height: 35) {
+                  ...GatsbyImageSharpFixed 
                 }
               }
             }
