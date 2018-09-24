@@ -1,5 +1,6 @@
 import * as React from "react";
-import Link from "gatsby-link";
+import {Link} from "gatsby";
+import { StaticQuery, graphql } from "gatsby";
 import { Header, Grid, Card, List, Container, Feed, Segment, Comment } from "semantic-ui-react";
 import { MarkdownRemarkConnection, ImageSharp } from "../graphql-types";
 import BlogTitle from "../components/BlogTitle";
@@ -8,23 +9,20 @@ import BlogPagination from "../components/BlogPagination/BlogPagination";
 import { get } from "lodash";
 import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
 import FooterContact from "../components/FooterContact/FooterContact";
-import Layout from "../components/layout";
-import {graphql} from "gatsby";
+import {withLayout, LayoutProps} from "../components/Layout";
+import { MarkdownRemark } from "../graphql-types";
 
-interface BlogProps {
+interface BlogProps extends LayoutProps {
   data: {
     tags: MarkdownRemarkConnection;
     posts: MarkdownRemarkConnection;
   };
-  pathContext: {
+  pageContext: {
     tag?: string; // only set into `templates/tags-pages.tsx`
-  };
-  location: {
-    pathname: string;
   };
 }
 
-export default (props: BlogProps) => {
+const BlogPage = (props: BlogProps) => {
   const tags = props.data.tags.group;
   const posts = props.data.posts.edges;
   const { pathname } = props.location;
@@ -34,10 +32,10 @@ export default (props: BlogProps) => {
   // TODO export posts in a proper component
   const Posts = (
     <Container>
-      {posts.map(({ node }) => {
+      {posts.map(({ node }: {node: MarkdownRemark}) => {
         const { frontmatter, timeToRead, fields: { slug }, excerpt } = node;
-        const avatar = frontmatter.author.avatar.childImageSharp as ImageSharp;
-        const cover = get(frontmatter, "image.children.0.responsiveResolution", {});
+        const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
+        const cover = get(frontmatter, "image.children.0.fixed", {});
 
         const extra = (
           <Comment.Group>
@@ -80,7 +78,6 @@ export default (props: BlogProps) => {
   );
 
   return (
-   <Layout location={props.location}>
     <Container>
       {/* Title */}
       <BlogTitle />
@@ -95,16 +92,17 @@ export default (props: BlogProps) => {
             </Segment>
           </div>
           <div>
-            <TagsCard Link={Link} tags={tags} tag={props.pathContext.tag} />
+            <TagsCard Link={Link} tags={tags} tag={props.pageContext.tag} />
           </div>
         </Grid>
       </Segment>
       <DanismakIsterMisin />
       <FooterContact />
     </Container>
-    </Layout>
   );
 };
+
+export default withLayout(BlogPage);
 
 export const pageQuery = graphql`
 query PageBlog {
@@ -137,18 +135,24 @@ query PageBlog {
           title
           updatedDate(formatString: "DD MMMM, YYYY")
           image {
-            childImageSharp {
+            children {
+              ... on ImageSharp {
                 fixed(width: 700, height: 100) {
-                ...GatsbyImageSharpFixed 
+                  src
+                  srcSet
+                }
               }
             }
           }
           author {
             id
             avatar {
-              childImageSharp {
-                  fixed(width: 35, height: 35) {
-                  ...GatsbyImageSharpFixed 
+              children {
+                ... on ImageSharp {
+                  fixed(width: 700, height: 100) {
+                    src
+                    srcSet
+                  }
                 }
               }
             }

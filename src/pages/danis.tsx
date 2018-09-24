@@ -1,9 +1,8 @@
 import * as React from "react";
 import { Header, Icon, Grid } from "semantic-ui-react";
-import Layout from "../components/layout";
+import {withLayout} from "../components/Layout";
 
-export default () =>
-<Layout>
+const DanisPage = () =>
   <Grid centered verticalAlign="middle">
     <Grid.Column>
       <Grid.Row>
@@ -13,4 +12,6 @@ export default () =>
       </Grid.Row>
     </Grid.Column>
   </Grid>
-</Layout>;
+;
+
+export default withLayout(DanisPage);

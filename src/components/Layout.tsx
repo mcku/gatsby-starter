@@ -1,4 +1,4 @@
-import Link from "gatsby-link";
+import { Link } from "gatsby";
 import * as React from "react";
 import HeaderMenu from "./HeaderMenu/HeaderMenu";
 import SidebarMenu from "./SidebarMenu/SidebarMenu";
@@ -15,16 +15,15 @@ export const menuItems = [
    { name: "Makaleler", path: "/blog/", exact: false, icon: "newspaper" },
 ];
 
-interface DefaultLayoutProps extends React.HTMLProps<HTMLDivElement> {
+export interface LayoutProps {
   location: {
     pathname: string;
   };
   children: any;
 }
 
-export default class DefaultLayout extends React.PureComponent<DefaultLayoutProps, void> {
-  render() {
-    const { pathname } = this.props.location;
+const Layout = (props: LayoutProps) => {
+    const { pathname } = props.location;
 
     return (
       <Provider store={store}>
@@ -42,7 +41,7 @@ export default class DefaultLayout extends React.PureComponent<DefaultLayoutProp
 
             {/* Render children pages */}
             <div style={{ paddingBottom: 60 }}>
-              {this.props.children}
+              {props.children}
             </div>
 
             {/* Footer */}
@@ -55,5 +54,17 @@ export default class DefaultLayout extends React.PureComponent<DefaultLayoutProp
         </Sidebar.Pushable>
       </Provider>
     );
-  }
-}
+};
+
+export default Layout;
+
+export const withLayout = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
+    class WithLayout extends React.Component<P & LayoutProps> {
+ render() {
+      return (
+          <Layout location= { this.props.location } >
+            <WrappedComponent { ...this.props } />
+          </Layout >
+        );
+    }
+  };

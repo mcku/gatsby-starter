@@ -1,5 +1,5 @@
 import * as React from "react";
-import Link from "gatsby-link";
+import { Link } from "gatsby";
 import { get } from "lodash";
 import { Header, Container, Segment, Icon, Label, Button, Grid, Card, Image, Item, Comment } from "semantic-ui-react";
 import { MarkdownRemark, ImageSharp, MarkdownRemarkConnection, Site } from "../graphql-types";
@@ -7,9 +7,10 @@ import BlogTitle from "../components/BlogTitle";
 import { DiscussionEmbed } from "disqus-react";
 import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
 import FooterContact from "../components/FooterContact/FooterContact";
+import {withLayout, LayoutProps} from "../components/Layout";
 import { graphql } from "gatsby";
 
-interface BlogPostProps {
+interface BlogPostProps extends LayoutProps {
   data: {
     post: MarkdownRemark;
     recents: MarkdownRemarkConnection;
@@ -17,17 +18,17 @@ interface BlogPostProps {
   };
 }
 
-export default (props: BlogPostProps) => {
+const BlogPostPage =  (props: BlogPostProps) => {
   const { frontmatter, html, timeToRead } = props.data.post;
-  const avatar = frontmatter.author.avatar.childImageSharp as ImageSharp;
+  const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
 
   const tags = props.data.post.frontmatter.tags
     .map((tag) => <Label key={tag}><Link to={`/blog/tags/${tag}/`}>{tag}</Link></Label>);
 
-  const recents = props.data.recents && props.data.recents.edges
+  const recents = props.data.recents.edges
     .map(({ node }) => {
-      const recentAvatar = node.frontmatter.author.avatar.childImageSharp as ImageSharp;
-      const recentCover = get(node, "frontmatter.image.childImageSharp.fixed", {});
+      const recentAvatar = node.frontmatter.author.avatar.children[0] as ImageSharp;
+      const recentCover = get(node, "frontmatter.image.children.0.fixed", {});
       const extra = (
         <Comment.Group>
           <Comment>
@@ -59,7 +60,7 @@ export default (props: BlogPostProps) => {
       );
     });
 
-  const cover = get(frontmatter, "image.childImageSharp.responsiveResolution", {} );
+  const cover = get(frontmatter, "image.children.0.fixed", {} );
   return (
     <Container>
       <BlogTitle />
@@ -96,7 +97,7 @@ export default (props: BlogPostProps) => {
         && props.data.site.siteMetadata
         && props.data.site.siteMetadata.disqus
         && <Segment vertical>
-            <DiscussionEmbed shortname={props.data.site.siteMetadata.disqus}/>
+            <DiscussionEmbed shortname={props.data.site.siteMetadata.disqus} config={{}}/>
         </Segment>
       }
       <Segment vertical>
@@ -109,6 +110,8 @@ export default (props: BlogPostProps) => {
     </Container>
   );
 };
+
+export default withLayout(BlogPostPage);
 
 export const pageQuery = graphql`
   query TemplateBlogPost($slug: String!) {
@@ -131,21 +134,27 @@ export const pageQuery = graphql`
         bio
         twitter
         avatar {
-          childImageSharp{
+          children {
+	          ... on ImageSharp {
                 fixed(width: 80, height: 80, quality: 100) {
-                ...GatsbyImageSharpFixed 
+                 src
+                 srcSet
               }
+	          }
           }
         }
       }
       title
       updatedDate(formatString: "MMM D, YYYY")
       image {
-        childImageSharp{
-                fixed(width: 900, height: 300, quality: 100) {
-                ...GatsbyImageSharpFixed 
-              }
-        } 
+        children { 
+	        ... on ImageSharp {
+            fixed(width: 900, height: 300, quality: 100) {
+              src
+              srcSet
+            }
+	        }
+        }    
       }
     }
   }
@@ -167,18 +176,24 @@ export const pageQuery = graphql`
         frontmatter {
           title
           image {
-            childImageSharp{
+            children{ 
+          		... on ImageSharp {
                 fixed(width: 300, height: 100) {
-                ...GatsbyImageSharpFixed 
-            }
+                  src
+                  srcSet
+              }
+             }
             }
           }
           author {
             id
             avatar {
-              childImageSharp {
+              children { 
+                ... on ImageSharp {
                   fixed(width: 36, height: 36) {
-                  ...GatsbyImageSharpFixed 
+                    src
+                    srcSet
+                  }
                 }
               }
             }

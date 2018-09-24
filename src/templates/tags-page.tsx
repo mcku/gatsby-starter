@@ -37,19 +37,25 @@ query TemplateTagPage($tag: String) {
           title
           updatedDate(formatString: "DD MMMM, YYYY")
           image {
-            childImageSharp {
+            children { 
+              ... on ImageSharp {
               fixed(width: 700, height: 100) {
-                ...GatsbyImageSharpFixed 
+                src
+                srcSet
               }
+	     }
             }
           }
           author {
             id
             avatar {
-              childImageSharp {
+              children {
+                ... on ImageSharp {
                   fixed(width: 35, height: 35) {
-                  ...GatsbyImageSharpFixed 
+                   src
+                   srcSet
                 }
+               }
               }
             }
           }

@@ -1,7 +1,7 @@
 import * as React from "react";
-import Link from "gatsby-link";
+import { Link } from "gatsby";
 import HeaderMenu from "../components/HeaderMenu/HeaderMenu";
-// import { menuItems } from "../layouts";
+import { withLayout, LayoutProps, menuItems } from "../components/Layout";
 import {
   Button,
   Segment,
@@ -14,7 +14,7 @@ import {
 import DanismakIsterMisin from "../components/DanismakIsterMisin/DanismakIsterMisin";
 import FooterContact from "../components/FooterContact/FooterContact";
 const bookPile = require("../assets/bookPile.jpg");
-import Layout from "../components/layout";
+import Layout from "../components/Layout";
 
 interface IndexPageProps {
   location: {
@@ -22,8 +22,8 @@ interface IndexPageProps {
   };
 }
 
-export default (props: IndexPageProps) =>
-  <Layout location={props.location}><Container>
+const IndexPage = (props: IndexPageProps) =>
+  <Container>
     <Segment vertical >
       <Header as="h2">
         <Icon name="home" />
@@ -70,7 +70,7 @@ export default (props: IndexPageProps) =>
         </Grid.Row>
         <Grid.Row>
           <Container text>
-            <Icon name="hand right outline" size="huge"/><Button color="orange" as={Link} to="/blog">
+            <Icon name="hand point right outline" size="huge"/><Button color="orange" as={Link} to="/blog">
             Hemen okumaya başla</Button> 
           </Container>
         </Grid.Row>
@@ -124,4 +124,6 @@ export default (props: IndexPageProps) =>
         </Grid.Row>
       </Grid>
     </Segment> */}
-  </Container></Layout>;
+  </Container>;
+
+  export default withLayout(IndexPage);
