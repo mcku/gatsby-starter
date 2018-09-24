@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link} from "gatsby";
+import { Link } from "gatsby";
 import { StaticQuery, graphql } from "gatsby";
 import { Header, Grid, Card, List, Container, Feed, Segment, Comment } from "semantic-ui-react";
 import { MarkdownRemarkConnection, ImageSharp } from "../graphql-types";
@@ -28,13 +28,17 @@ const BlogPage = (props: BlogProps) => {
   const { pathname } = props.location;
   const pageCount = Math.ceil(props.data.posts.totalCount / 10);
 
-  // console.log(`BENISIL -- frontmatter.author: ${JSON.stringify(posts[0].node.frontmatter.author)}`);
+  // console.log(`BENISIL -- frontmatter.author.avatar:
+  // ${JSON.stringify(posts[0].node.frontmatter.author.avatar, null, 2)}`);
+
   // TODO export posts in a proper component
   const Posts = (
     <Container>
       {posts.map(({ node }: {node: MarkdownRemark}) => {
         const { frontmatter, timeToRead, fields: { slug }, excerpt } = node;
-        const avatar = frontmatter.author.avatar.children[0] as ImageSharp;
+        const avatar: ImageSharp = frontmatter.author.avatar.children &&
+          frontmatter.author.avatar.children[0] as ImageSharp ||
+          frontmatter.author.avatar.childImageSharp as ImageSharp;
         const cover = get(frontmatter, "image.children.0.fixed", {});
 
         const extra = (
@@ -149,7 +153,7 @@ query PageBlog {
             avatar {
               children {
                 ... on ImageSharp {
-                  fixed(width: 700, height: 100) {
+                  fixed(width: 35, height: 35) {
                     src
                     srcSet
                   }
